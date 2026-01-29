@@ -767,9 +767,12 @@
 
                 <div class="b">
                   <h4>{{ v.nombreproducto }}</h4>
-                  <div class="sub">
-                    <i class="bi bi-info-circle me-2"></i>{{ v.estado|default:"Sin estado" }}
-                  </div>
+                    <div class="sub">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span class="{% if v.estado|lower == 'bueno' %}text-success{% elif v.estado|lower == 'regular' %}text-warning{% endif %} fw-bold">
+                        {{ v.estado|default:"Sin estado" }}
+                    </span>
+                    </div>
                   <div class="price">${{ v.precio }}</div>
 
                   {% if v.descripcion %}
