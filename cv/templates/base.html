@@ -4,18 +4,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Mi Hoja de Vida{% endblock %}</title>
-
+  <title>{% block title %}Portfolio{% endblock %}</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=20260125">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+        --mono-black: #000000;
+        --mono-gray: #666666;
+        --mono-light: #f2f2f2;
+        --accent-color: #0047FF; /* Un azul eléctrico moderno */
+    }
+    body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: #ffffff; 
+        color: var(--mono-black);
+    }
+    .editorial-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+    h1, h2, h3 { font-family: 'Syne', sans-serif; text-transform: uppercase; }
+  </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <div class="container py-4 cv-wrap">
+  <div class="editorial-container">
     {% block content %}{% endblock %}
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

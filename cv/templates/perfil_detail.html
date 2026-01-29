@@ -1,535 +1,598 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ perfil.nombres }} {{ perfil.apellidos }} | CV Profesional{% endblock %}
+{% block title %}{{ perfil.nombres }} {{ perfil.apellidos }} | Perfil{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<style>
+  /* ===== PERFIL V2 (diseño nuevo, distinto a cv_print) ===== */
+  .p2-shell{max-width:1200px;margin:0 auto}
+  .p2-top{
+    border-radius: 20px;
+    padding: 22px;
+    border: 1px solid rgba(0,0,0,.08);
+    background:
+      radial-gradient(1200px 400px at 10% -10%, rgba(59,130,246,.18), transparent 60%),
+      radial-gradient(800px 300px at 90% 0%, rgba(16,185,129,.16), transparent 55%),
+      linear-gradient(180deg, #fff, #f8fafc);
+    position: relative;
+    overflow: hidden;
+  }
+  .p2-top:after{
+    content:"";
+    position:absolute; inset:-2px;
+    background: repeating-linear-gradient(135deg, rgba(15,23,42,.06) 0 2px, transparent 2px 10px);
+    opacity:.25; pointer-events:none;
+  }
+  .p2-top > *{position:relative; z-index:1}
+
+  .p2-avatar{
+    width: 120px; height: 120px;
+    border-radius: 18px;
+    overflow:hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    background:#cbd5e1;
+    flex: 0 0 auto;
+  }
+  .p2-avatar img{width:100%;height:100%;object-fit:cover}
+  .p2-avatar-fallback{
+    width:100%;height:100%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:42px;color:#fff;
+    background: linear-gradient(135deg,#0f172a,#3b82f6);
+  }
+
+  .p2-name{font-weight:900; letter-spacing:.3px; margin:0}
+  .p2-role{margin:6px 0 0; font-weight:700; color:#2563eb}
+  .p2-bio{margin:12px 0 0; color:#475569}
+  .p2-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,23,42,.10);
+    background: rgba(255,255,255,.8);
+    backdrop-filter: blur(6px);
+    font-size: .9rem;
+    color:#0f172a;
+  }
+
+  .p2-actions .btn{border-radius:999px}
+  .p2-kpis{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 12px;
+  }
+  .p2-kpi{
+    border-radius:16px;
+    border:1px solid rgba(0,0,0,.08);
+    background:#fff;
+    padding:14px 14px;
+  }
+  .p2-kpi b{font-size:1.4rem}
+  .p2-kpi small{display:block; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:.6px}
+
+  .p2-side{
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.08);
+    background:#fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    overflow:hidden;
+  }
+  .p2-side-h{
+    padding:14px 16px;
+    background: linear-gradient(180deg,#0f172a,#111827);
+    color:#fff;
+  }
+  .p2-side-h .bi{opacity:.95}
+  .p2-side-b{padding:16px}
+  .p2-row{
+    display:flex; gap:12px; align-items:flex-start;
+    padding:10px 0;
+    border-bottom: 1px dashed rgba(15,23,42,.12);
+  }
+  .p2-row:last-child{border-bottom:0}
+  .p2-ico{
+    width:34px; height:34px;
+    border-radius: 12px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(37,99,235,.10);
+    color:#2563eb;
+    flex: 0 0 auto;
+  }
+  .p2-lab{font-size:.78rem; color:#64748b; font-weight:800; text-transform:uppercase; letter-spacing:.5px}
+  .p2-val{font-weight:700; color:#0f172a; word-break:break-word}
+
+  .p2-section{
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.08);
+    background:#fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,.05);
+    overflow:hidden;
+  }
+  .p2-section .accordion-button{font-weight:900}
+  .p2-badge-date{
+    font-size:.78rem;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#f8fafc;
+    color:#0f172a;
+    font-weight:800;
+    white-space:nowrap;
+  }
+  .p2-item{
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,.08);
+    padding:14px;
+    background: #fff;
+  }
+  .p2-item + .p2-item{margin-top:12px}
+  .p2-item h6{margin:0; font-weight:900}
+  .p2-muted{color:#64748b}
+  .p2-doc{
+    border-radius: 14px;
+    border:1px solid rgba(0,0,0,.10);
+    overflow:hidden;
+    background:#f8fafc;
+  }
+  .p2-doc img{width:100%;height:140px;object-fit:cover;display:block}
+  .p2-doc .p2-doc-foot{padding:10px 12px; background:#fff}
+  .p2-doc a{text-decoration:none}
+  .p2-doc small{font-weight:900}
+  .p2-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media (max-width: 992px){
+    .p2-kpis{grid-template-columns: 1fr}
+    .p2-grid2{grid-template-columns: 1fr}
+    .p2-avatar{width:104px;height:104px}
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<div class="p2-shell">
 
-<style>
-    :root {
-        --primary-color: #2563eb;
-        --secondary-color: #475569;
-        --bg-soft: #f8fafc;
-    }
-
-    /* Hero Section con degradado */
-    .hero-section {
-        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-        border-radius: 1rem;
-        padding: 2rem;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 2rem;
-    }
-
-    .avatar-frame {
-        width: 160px;
-        height: 160px;
-        border-radius: 50%;
-        border: 4px solid white;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        background-color: #cbd5e1;
-    }
-
-    .avatar-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    /* Timeline para Experiencia */
-    .timeline {
-        border-left: 2px solid #e2e8f0;
-        margin-left: 1rem;
-        padding-left: 2rem;
-        position: relative;
-    }
-
-    .timeline-item {
-        position: relative;
-        margin-bottom: 2.5rem;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        left: -2.6rem;
-        top: 0.25rem;
-        width: 1.25rem;
-        height: 1.25rem;
-        background: white;
-        border: 2px solid var(--primary-color);
-        border-radius: 50%;
-    }
-
-    /* Tarjetas de Documentos/Fotos */
-    .doc-card {
-        border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .doc-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-color);
-    }
-
-    .doc-preview {
-        height: 160px;
-        background-color: #f1f5f9;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .doc-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .pdf-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #ef4444;
-        color: white;
-        font-size: 0.7rem;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-weight: bold;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* Badges y Etiquetas */
-    .info-tag {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.75rem;
-        background-color: #f1f5f9;
-        color: var(--secondary-color);
-        border-radius: 999px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .price-tag {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #16a34a;
-    }
-</style>
-
-<div class="hero-section">
-    <div class="row align-items-center">
-        <div class="col-md-auto text-center text-md-start mb-3 mb-md-0">
-            <div class="avatar-frame mx-auto">
-                {% if perfil.foto_perfil_url %}
-                    <img src="{{ perfil.foto_perfil_url }}" class="avatar-img" alt="Foto de Perfil">
-                {% else %}
-                    <div class="d-flex align-items-center justify-content-center h-100 bg-secondary text-white fs-1 fw-bold">
-                        {{ perfil.nombres|slice:":1" }}{{ perfil.apellidos|slice:":1" }}
-                    </div>
-                {% endif %}
+  <!-- ===== CABECERA NUEVA ===== -->
+  <section class="p2-top mb-4">
+    <div class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="p2-avatar">
+          {% if perfil.foto_perfil_url %}
+            <img src="{{ perfil.foto_perfil_url }}" alt="Foto de perfil">
+          {% else %}
+            <div class="p2-avatar-fallback">
+              {{ perfil.nombres|slice:":1" }}{{ perfil.apellidos|slice:":1" }}
             </div>
+          {% endif %}
         </div>
-        <div class="col-md">
-            <div class="text-center text-md-start">
-                <h1 class="fw-bold text-dark mb-1">{{ perfil.nombres }} {{ perfil.apellidos }}</h1>
-                {% if perfil.descripcionperfil %}
-                    <p class="text-primary fs-5 fw-medium mb-3">{{ perfil.descripcionperfil }}</p>
-                {% endif %}
-                
-                <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2">
-                    <span class="info-tag"><i class="bi bi-person-vcard me-2"></i>{{ perfil.numerocedula }}</span>
-                    {% if perfil.nacionalidad %}
-                        <span class="info-tag"><i class="bi bi-flag me-2"></i>{{ perfil.nacionalidad }}</span>
-                    {% endif %}
-                    {% if perfil.lugarnacimiento %}
-                        <span class="info-tag"><i class="bi bi-geo-alt me-2"></i>{{ perfil.lugarnacimiento }}</span>
-                    {% endif %}
-                    {% if perfil.licenciaconducir %}
-                        <span class="info-tag bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle">
-                            <i class="bi bi-car-front-fill me-2"></i>Licencia: {{ perfil.licenciaconducir }}
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
+
+        <div>
+          <h1 class="p2-name h2">{{ perfil.nombres }} {{ perfil.apellidos }}</h1>
+          {% if perfil.descripcionperfil %}
+            <div class="p2-role">{{ perfil.descripcionperfil }}</div>
+          {% else %}
+            <div class="p2-role">Perfil profesional</div>
+          {% endif %}
+
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <span class="p2-chip"><i class="bi bi-person-vcard"></i>{{ perfil.numerocedula }}</span>
+            {% if perfil.nacionalidad %}<span class="p2-chip"><i class="bi bi-flag"></i>{{ perfil.nacionalidad }}</span>{% endif %}
+            {% if perfil.lugarnacimiento %}<span class="p2-chip"><i class="bi bi-geo-alt"></i>{{ perfil.lugarnacimiento }}</span>{% endif %}
+            {% if perfil.licenciaconducir %}<span class="p2-chip"><i class="bi bi-car-front"></i>Licencia {{ perfil.licenciaconducir }}</span>{% endif %}
+          </div>
+
+          {% if perfil.direcciondomiciliaria %}
+            <p class="p2-bio mb-0"><i class="bi bi-house-door me-2"></i>{{ perfil.direcciondomiciliaria }}</p>
+          {% endif %}
         </div>
-        <div class="col-md-auto mt-3 mt-md-0">
-            <div class="d-flex flex-column gap-2">
-                <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#configPDFModal">
-                    <i class="bi bi-sliders me-2"></i>Personalizar
-                </button>
-                <a href="{% url 'cv_print' perfil.idperfil %}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 fw-bold shadow-sm">
-                    <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar CV
-                </a>
-            </div>
-        </div>
+      </div>
+
+      <div class="p2-actions d-flex flex-column flex-sm-row gap-2">
+        <button type="button" class="btn btn-outline-dark btn-sm px-4" data-bs-toggle="modal" data-bs-target="#configPDFModal">
+          <i class="bi bi-sliders me-2"></i>Personalizar PDF
+        </button>
+        <a href="{% url 'cv_print' perfil.idperfil %}" target="_blank" class="btn btn-primary btn-sm px-4 fw-bold">
+          <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar CV
+        </a>
+      </div>
     </div>
-</div>
 
-<div class="row g-4 align-items-start">
-    
+    <hr class="my-3" style="opacity:.12">
+
+    <div class="p2-kpis">
+      <div class="p2-kpi">
+        <small>Experiencia</small>
+        <b>{{ experiencias|length }}</b>
+      </div>
+      <div class="p2-kpi">
+        <small>Formación</small>
+        <b>{{ cursos|length }}</b>
+      </div>
+      <div class="p2-kpi">
+        <small>Logros</small>
+        <b>{{ reconocimientos|length }}</b>
+      </div>
+    </div>
+  </section>
+
+  <div class="row g-4">
+    <!-- ===== SIDEBAR NUEVA ===== -->
     <div class="col-lg-4">
-        <aside class="position-sticky" style="top: 2rem;">
-            
-            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
-                    <h6 class="fw-bold text-uppercase text-secondary small ls-1"><i class="bi bi-chat-left-dots-fill text-primary me-2"></i>Contacto</h6>
-                </div>
-                <div class="card-body p-4">
-                    {% if perfil.telefonoconvencional %}
-                        <div class="mb-3">
-                            <label class="small text-muted fw-bold">Móvil / WhatsApp</label>
-                            <div class="fs-6 text-dark">{{ perfil.telefonoconvencional }}</div>
-                        </div>
-                    {% endif %}
-                    {% if perfil.telefonofijo %}
-                        <div class="mb-3">
-                            <label class="small text-muted fw-bold">Teléfono Fijo</label>
-                            <div class="fs-6 text-dark">{{ perfil.telefonofijo }}</div>
-                        </div>
-                    {% endif %}
-                    {% if perfil.sitioweb %}
-                        <div class="mb-3">
-                            <label class="small text-muted fw-bold">Sitio Web / Portafolio</label>
-                            <div class="text-truncate">
-                                <a href="{{ perfil.sitioweb }}" target="_blank" class="text-decoration-none fw-medium">{{ perfil.sitioweb }}</a>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
-                    <h6 class="fw-bold text-uppercase text-secondary small ls-1"><i class="bi bi-person-lines-fill text-success me-2"></i>Detalles</h6>
-                </div>
-                <div class="card-body p-4">
-                    <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
-                        <li class="d-flex justify-content-between">
-                            <span class="text-muted">Nacimiento</span>
-                            <span class="fw-semibold">{% if perfil.fechanacimiento %}{{ perfil.fechanacimiento|date:"d M Y" }}{% else %}—{% endif %}</span>
-                        </li>
-                        <li class="d-flex justify-content-between">
-                            <span class="text-muted">Estado Civil</span>
-                            <span class="fw-semibold">{{ perfil.estadocivil|default:"—" }}</span>
-                        </li>
-                        {% if perfil.sexo %}
-                        <li class="d-flex justify-content-between">
-                            <span class="text-muted">Género</span>
-                            <span class="fw-semibold">{% if perfil.sexo == 'M' %}Masculino{% elif perfil.sexo == 'F' %}Femenino{% else %}{{ perfil.sexo }}{% endif %}</span>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
-                    <h6 class="fw-bold text-uppercase text-secondary small ls-1"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Ubicación</h6>
-                </div>
-                <div class="card-body p-4">
-                    <div class="mb-2">
-                        <i class="bi bi-house-door text-muted me-2"></i>{{ perfil.direcciondomiciliaria|default:"Domicilio no registrado" }}
-                    </div>
-                    {% if perfil.direcciontrabajo %}
-                    <div>
-                        <i class="bi bi-building text-muted me-2"></i>{{ perfil.direcciontrabajo }}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <a class="btn btn-sm btn-link text-muted" href="/admin/">
-                    <i class="bi bi-gear-fill me-1"></i>Administrar Datos
-                </a>
-            </div>
-        </aside>
-    </div>
-
-    <div class="col-lg-8">
-        
-        <div class="card border-0 shadow-sm rounded-4 mb-4 p-2">
-            <ul class="nav nav-pills nav-fill" id="pills-tab" role="tablist">
-                <li class="nav-item"><button class="nav-link active rounded-pill fw-bold small" data-bs-toggle="pill" data-bs-target="#pills-resumen">Resumen</button></li>
-                {% if experiencias %}<li class="nav-item"><button class="nav-link rounded-pill fw-bold small" data-bs-toggle="pill" data-bs-target="#pills-exp">Experiencia</button></li>{% endif %}
-                {% if cursos %}<li class="nav-item"><button class="nav-link rounded-pill fw-bold small" data-bs-toggle="pill" data-bs-target="#pills-cursos">Formación</button></li>{% endif %}
-                {% if reconocimientos %}<li class="nav-item"><button class="nav-link rounded-pill fw-bold small" data-bs-toggle="pill" data-bs-target="#pills-rec">Logros</button></li>{% endif %}
-                {% if ventas_garage %}<li class="nav-item"><button class="nav-link rounded-pill fw-bold small" data-bs-toggle="pill" data-bs-target="#pills-garage">Garage</button></li>{% endif %}
-            </ul>
+      <aside class="p2-side position-sticky" style="top: 1.5rem;">
+        <div class="p2-side-h d-flex align-items-center justify-content-between">
+          <div class="fw-black fw-bold"><i class="bi bi-compass me-2"></i>Panel</div>
+          <a class="text-white-50 small text-decoration-none" href="/admin/"><i class="bi bi-gear-fill me-1"></i>Admin</a>
         </div>
 
-        <div class="tab-content" id="pills-tabContent">
-            
-            <div class="tab-pane fade show active" id="pills-resumen" role="tabpanel">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 bg-primary bg-opacity-10">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-briefcase text-primary fs-1 mb-2"></i>
-                                <h2 class="fw-bold text-dark mb-0">{{ experiencias|length }}</h2>
-                                <div class="text-muted small fw-bold text-uppercase">Experiencias</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 bg-success bg-opacity-10">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-mortarboard text-success fs-1 mb-2"></i>
-                                <h2 class="fw-bold text-dark mb-0">{{ cursos|length }}</h2>
-                                <div class="text-muted small fw-bold text-uppercase">Cursos</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 h-100 bg-warning bg-opacity-10">
-                            <div class="card-body text-center p-4">
-                                <i class="bi bi-trophy text-warning-emphasis fs-1 mb-2"></i>
-                                <h2 class="fw-bold text-dark mb-0">{{ reconocimientos|length }}</h2>
-                                <div class="text-muted small fw-bold text-uppercase">Logros</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {% if productos_academicos %}
-                    <div class="col-12 mt-4">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-book-half me-2"></i>Producción Académica</h5>
-                        <div class="card border-0 shadow-sm rounded-4">
-                            <ul class="list-group list-group-flush">
-                                {% for p in productos_academicos %}
-                                <li class="list-group-item p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="fw-bold">{{ p.nombrerecurso }}</div>
-                                        <span class="badge bg-secondary">{{ p.clasificador }}</span>
-                                    </div>
-                                    <small class="text-muted">{{ p.descripcion|default:"" }}</small>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if productos_laborales %}
-                    <div class="col-12 mt-4">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-briefcase-fill me-2"></i>Producción Laboral</h5>
-                        <div class="card border-0 shadow-sm rounded-4">
-                            <ul class="list-group list-group-flush">
-                                {% for p in productos_laborales %}
-                                <li class="list-group-item p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="fw-bold">{{ p.nombreproducto }}</div>
-                                        <span class="badge bg-secondary">{{ p.fechaproducto|date:"Y" }}</span>
-                                    </div>
-                                    <small class="text-muted">{{ p.descripcion|default:"" }}</small>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
+        <div class="p2-side-b">
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-telephone"></i></div>
+            <div>
+              <div class="p2-lab">Móvil / WhatsApp</div>
+              <div class="p2-val">{{ perfil.telefonoconvencional|default:"—" }}</div>
             </div>
+          </div>
 
-            <div class="tab-pane fade" id="pills-exp" role="tabpanel">
-                <div class="card border-0 shadow-sm rounded-4 p-4">
-                    <h4 class="fw-bold mb-4">Trayectoria Profesional</h4>
-                    <div class="timeline">
-                        {% for e in experiencias %}
-                        <div class="timeline-item">
-                            <div class="timeline-dot"></div>
-                            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
-                                <div>
-                                    <h5 class="fw-bold mb-0 text-primary">{{ e.cargodesempenado }}</h5>
-                                    <div class="fw-semibold text-dark">{{ e.nombrempresa }}</div>
-                                </div>
-                                <div class="text-md-end text-muted small mt-1 mt-md-0">
-                                    <i class="bi bi-calendar-event me-1"></i>
-                                    {{ e.fechainiciogestion|date:"M Y" }} — {% if e.fechafingestion %}{{ e.fechafingestion|date:"M Y" }}{% else %}<span class="text-success fw-bold">Actual</span>{% endif %}
-                                </div>
-                            </div>
-                            
-                            {% if e.descripcionfunciones %}
-                                <p class="text-secondary small mb-3">{{ e.descripcionfunciones|default:"" }}</p>
-                            {% endif %}
-                            
-                            {% if e.final_url %}
-                            <div class="doc-card d-inline-block" style="width: 200px;">
-                                <a href="{{ e.final_url }}" target="_blank" class="text-decoration-none">
-                                    <div class="doc-preview" style="height: 120px;">
-                                        {% if e.is_pdf %}<span class="pdf-badge">PDF</span>{% endif %}
-                                        <img src="{{ e.thumbnail }}" alt="Preview">
-                                    </div>
-                                    <div class="p-2 text-center bg-light border-top">
-                                        <small class="fw-bold text-danger"><i class="bi bi-eye me-1"></i>Ver Certificado</small>
-                                    </div>
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-telephone-fill"></i></div>
+            <div>
+              <div class="p2-lab">Teléfono fijo</div>
+              <div class="p2-val">{{ perfil.telefonofijo|default:"—" }}</div>
             </div>
+          </div>
 
-            <div class="tab-pane fade" id="pills-cursos" role="tabpanel">
-                <div class="row g-3">
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-globe2"></i></div>
+            <div class="w-100">
+              <div class="p2-lab">Sitio web</div>
+              {% if perfil.sitioweb %}
+                <a class="p2-val text-decoration-none" href="{{ perfil.sitioweb }}" target="_blank">{{ perfil.sitioweb }}</a>
+              {% else %}
+                <div class="p2-val">—</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-calendar3"></i></div>
+            <div>
+              <div class="p2-lab">Nacimiento</div>
+              <div class="p2-val">{% if perfil.fechanacimiento %}{{ perfil.fechanacimiento|date:"d M Y" }}{% else %}—{% endif %}</div>
+            </div>
+          </div>
+
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-heart-pulse"></i></div>
+            <div>
+              <div class="p2-lab">Estado civil</div>
+              <div class="p2-val">{{ perfil.estadocivil|default:"—" }}</div>
+            </div>
+          </div>
+
+          {% if perfil.direcciontrabajo %}
+          <div class="p2-row">
+            <div class="p2-ico"><i class="bi bi-buildings"></i></div>
+            <div>
+              <div class="p2-lab">Dirección trabajo</div>
+              <div class="p2-val">{{ perfil.direcciontrabajo }}</div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="mt-3 d-grid gap-2">
+            <a href="#secciones" class="btn btn-outline-primary btn-sm"><i class="bi bi-layers me-2"></i>Ir a secciones</a>
+            {% if ventas_garage %}
+              <a href="#garage" class="btn btn-outline-dark btn-sm"><i class="bi bi-shop me-2"></i>Ver Garage</a>
+            {% endif %}
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ===== CONTENIDO NUEVO (ACORDEÓN) ===== -->
+    <div class="col-lg-8" id="secciones">
+      <section class="p2-section">
+        <div class="accordion" id="cvAccordion">
+
+          <!-- Resumen / Productos -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accResumen">
+                <i class="bi bi-stars me-2 text-primary"></i>Resumen & Producción
+              </button>
+            </h2>
+            <div id="accResumen" class="accordion-collapse collapse show" data-bs-parent="#cvAccordion">
+              <div class="accordion-body">
+                <div class="p2-grid2">
+                  <div class="p2-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6><i class="bi bi-book me-2 text-success"></i>Académico</h6>
+                      <span class="p2-badge-date">{{ productos_academicos|length }} item(s)</span>
+                    </div>
+                    <div class="mt-2 p2-muted">
+                      {% if productos_academicos %}
+                        <ul class="mb-0 ps-3">
+                          {% for p in productos_academicos|slice:":5" %}
+                            <li><b>{{ p.nombrerecurso }}</b> <span class="text-secondary">— {{ p.clasificador }}</span></li>
+                          {% endfor %}
+                        </ul>
+                        {% if productos_academicos|length > 5 %}<div class="small text-muted mt-2">+{{ productos_academicos|length|add:"-5" }} más</div>{% endif %}
+                      {% else %}
+                        No hay productos académicos registrados.
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="p2-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6><i class="bi bi-briefcase me-2 text-primary"></i>Laboral</h6>
+                      <span class="p2-badge-date">{{ productos_laborales|length }} item(s)</span>
+                    </div>
+                    <div class="mt-2 p2-muted">
+                      {% if productos_laborales %}
+                        <ul class="mb-0 ps-3">
+                          {% for p in productos_laborales|slice:":5" %}
+                            <li><b>{{ p.nombreproducto }}</b> <span class="text-secondary">— {{ p.fechaproducto|date:"Y" }}</span></li>
+                          {% endfor %}
+                        </ul>
+                        {% if productos_laborales|length > 5 %}<div class="small text-muted mt-2">+{{ productos_laborales|length|add:"-5" }} más</div>{% endif %}
+                      {% else %}
+                        No hay productos laborales registrados.
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {% if perfil.descripcionperfil %}
+                  <div class="mt-3 p2-item">
+                    <h6 class="mb-2"><i class="bi bi-chat-quote me-2 text-dark"></i>Descripción</h6>
+                    <div class="p2-muted">{{ perfil.descripcionperfil }}</div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Experiencia -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accExp">
+                <i class="bi bi-briefcase-fill me-2 text-dark"></i>Experiencia
+              </button>
+            </h2>
+            <div id="accExp" class="accordion-collapse collapse" data-bs-parent="#cvAccordion">
+              <div class="accordion-body">
+                {% if experiencias %}
+                  {% for e in experiencias %}
+                    <div class="p2-item">
+                      <div class="d-flex flex-column flex-md-row gap-2 justify-content-between">
+                        <div>
+                          <h6 class="text-primary">{{ e.cargodesempenado }}</h6>
+                          <div class="fw-bold">{{ e.nombrempresa }}</div>
+                          {% if e.descripcionfunciones %}
+                            <div class="p2-muted mt-2">{{ e.descripcionfunciones }}</div>
+                          {% endif %}
+                        </div>
+                        <div class="text-md-end">
+                          <span class="p2-badge-date">
+                            {{ e.fechainiciogestion|date:"M Y" }} —
+                            {% if e.fechafingestion %}{{ e.fechafingestion|date:"M Y" }}{% else %}Actual{% endif %}
+                          </span>
+                          {% if e.final_url %}
+                            <div class="mt-2">
+                              <a href="{{ e.final_url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-award me-1"></i>Certificado
+                              </a>
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      {% if e.final_url %}
+                        <div class="mt-3 p2-doc">
+                          <a href="{{ e.final_url }}" target="_blank">
+                            <img src="{{ e.thumbnail }}" alt="Certificado">
+                            <div class="p2-doc-foot d-flex justify-content-between align-items-center">
+                              <small class="text-danger"><i class="bi bi-eye me-1"></i>Ver archivo</small>
+                              {% if e.is_pdf %}<span class="badge text-bg-danger">PDF</span>{% endif %}
+                            </div>
+                          </a>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="text-muted">No hay experiencia registrada.</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Formación -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accCursos">
+                <i class="bi bi-mortarboard-fill me-2 text-success"></i>Formación
+              </button>
+            </h2>
+            <div id="accCursos" class="accordion-collapse collapse" data-bs-parent="#cvAccordion">
+              <div class="accordion-body">
+                {% if cursos %}
+                  <div class="row g-3">
                     {% for c in cursos %}
-                    <div class="col-md-6">
-                        <div class="doc-card h-100">
-                            <div class="doc-preview">
-                                {% if c.final_url %}
-                                    <a href="{{ c.final_url }}" target="_blank">
-                                        {% if c.is_pdf %}<span class="pdf-badge">PDF</span>{% endif %}
-                                        <img src="{{ c.thumbnail }}" alt="Curso">
-                                    </a>
-                                {% else %}
-                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted opacity-25">
-                                        <i class="bi bi-mortarboard display-4"></i>
-                                    </div>
-                                {% endif %}
+                      <div class="col-md-6">
+                        <div class="p2-item h-100">
+                          <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                              <h6 class="mb-1">{{ c.nombrecurso }}</h6>
+                              <div class="p2-muted">{{ c.entidadpatrocinadora }}</div>
                             </div>
-                            <div class="p-3 d-flex flex-column flex-grow-1">
-                                <div class="mb-2">
-                                    <span class="badge bg-info text-dark border">{{ c.totalhoras }} Horas</span>
-                                    <span class="text-muted small ms-2">{{ c.fechainicio|date:"M Y" }}</span>
+                            <span class="p2-badge-date">{{ c.fechainicio|date:"Y" }}</span>
+                          </div>
+
+                          <div class="mt-2 d-flex gap-2 flex-wrap">
+                            {% if c.totalhoras %}<span class="badge text-bg-light border">{{ c.totalhoras }} horas</span>{% endif %}
+                            {% if c.is_pdf %}<span class="badge text-bg-danger">PDF</span>{% endif %}
+                          </div>
+
+                          {% if c.final_url %}
+                            <div class="mt-3 p2-doc">
+                              <a href="{{ c.final_url }}" target="_blank">
+                                <img src="{{ c.thumbnail }}" alt="Curso">
+                                <div class="p2-doc-foot d-flex justify-content-between align-items-center">
+                                  <small class="text-primary"><i class="bi bi-eye me-1"></i>Ver certificado</small>
+                                  {% if c.is_pdf %}<span class="badge text-bg-danger">PDF</span>{% endif %}
                                 </div>
-                                <h6 class="fw-bold text-dark mb-1">{{ c.nombrecurso }}</h6>
-                                <div class="small text-secondary mb-3">{{ c.entidadpatrocinadora }}</div>
-                                
-                                <div class="mt-auto pt-2 border-top">
-                                    {% if c.final_url %}
-                                        <a href="{{ c.final_url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 fw-bold">Ver Certificado</a>
-                                    {% else %}
-                                        <button disabled class="btn btn-light btn-sm w-100 text-muted">Sin Archivo</button>
-                                    {% endif %}
-                                </div>
+                              </a>
                             </div>
+                          {% else %}
+                            <div class="text-muted small mt-3">Sin archivo adjunto.</div>
+                          {% endif %}
                         </div>
-                    </div>
+                      </div>
                     {% endfor %}
-                </div>
+                  </div>
+                {% else %}
+                  <div class="text-muted">No hay cursos registrados.</div>
+                {% endif %}
+              </div>
             </div>
-            
-             <div class="tab-pane fade" id="pills-rec" role="tabpanel">
+          </div>
+
+          <!-- Logros -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accLogros">
+                <i class="bi bi-trophy-fill me-2 text-warning"></i>Logros
+              </button>
+            </h2>
+            <div id="accLogros" class="accordion-collapse collapse" data-bs-parent="#cvAccordion">
+              <div class="accordion-body">
+                {% if reconocimientos %}
+                  {% for r in reconocimientos %}
+                    <div class="p2-item">
+                      <div class="d-flex flex-column flex-md-row gap-2 justify-content-between">
+                        <div>
+                          <h6 class="mb-1">{{ r.tiporeconocimiento }}</h6>
+                          <div class="fw-bold text-primary">{{ r.entidadpatrocinadora }}</div>
+                          {% if r.descripcionreconocimiento %}
+                            <div class="p2-muted mt-2">{{ r.descripcionreconocimiento }}</div>
+                          {% endif %}
+                        </div>
+                        <div class="text-md-end">
+                          <span class="p2-badge-date">{{ r.fechareconocimiento|date:"Y" }}</span>
+                          {% if r.final_url %}
+                            <div class="mt-2">
+                              <a href="{{ r.final_url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-eye me-1"></i>Ver
+                              </a>
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      {% if r.final_url %}
+                        <div class="mt-3 p2-doc">
+                          <a href="{{ r.final_url }}" target="_blank">
+                            <img src="{{ r.thumbnail }}" alt="Logro">
+                            <div class="p2-doc-foot d-flex justify-content-between align-items-center">
+                              <small class="text-danger"><i class="bi bi-eye me-1"></i>Ver archivo</small>
+                              {% if r.is_pdf %}<span class="badge text-bg-danger">PDF</span>{% endif %}
+                            </div>
+                          </a>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="text-muted">No hay logros registrados.</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Garage -->
+          {% if ventas_garage %}
+          <div class="accordion-item border-0" id="garage">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accGarage">
+                <i class="bi bi-shop me-2 text-dark"></i>Garage
+              </button>
+            </h2>
+            <div id="accGarage" class="accordion-collapse collapse" data-bs-parent="#cvAccordion">
+              <div class="accordion-body">
                 <div class="row g-3">
-                    {% for r in reconocimientos %}
+                  {% for v in ventas_garage %}
                     <div class="col-md-6">
-                        <div class="doc-card h-100">
-                            <div class="doc-preview">
-                                {% if r.final_url %}
-                                    <a href="{{ r.final_url }}" target="_blank">
-                                        {% if r.is_pdf %}<span class="pdf-badge">PDF</span>{% endif %}
-                                        <img src="{{ r.thumbnail }}" alt="Logro">
-                                    </a>
-                                {% else %}
-                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted opacity-25">
-                                        <i class="bi bi-trophy display-4"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="p-3 d-flex flex-column flex-grow-1">
-                                <h6 class="fw-bold text-dark mb-1">{{ r.tiporeconocimiento }}</h6>
-                                <div class="small text-primary fw-bold mb-2">{{ r.entidadpatrocinadora }}</div>
-                                <div class="small text-secondary mb-3">{{ r.descripcionreconocimiento|default:"" }}</div>
-                                
-                                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                    <span class="text-muted small">{{ r.fechareconocimiento|date:"Y" }}</span>
-                                    {% if r.final_url %}
-                                        <a href="{{ r.final_url }}" target="_blank" class="btn btn-outline-danger btn-sm fw-bold">Ver</a>
-                                    {% endif %}
-                                </div>
-                            </div>
+                      <div class="p2-item h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h6 class="mb-1">{{ v.nombreproducto }}</h6>
+                            <div class="p2-muted small">{{ v.estado }}</div>
+                          </div>
+                          <span class="p2-badge-date">${{ v.precio }}</span>
                         </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <div class="tab-pane fade" id="pills-garage" role="tabpanel">
-                <div class="row g-3">
-                    {% for v in ventas_garage %}
-                    <div class="col-md-6">
-                        <div class="doc-card h-100">
-                             <div class="doc-preview position-relative">
-                                <span class="position-absolute top-0 start-0 m-2 badge bg-white shadow-sm {% if v.estado == 'Bueno' %}text-success{% else %}text-warning{% endif %}">
-                                    {{ v.estado }}
-                                </span>
+                        {% if v.descripcion %}
+                          <div class="p2-muted mt-2">{{ v.descripcion }}</div>
+                        {% endif %}
 
-                                {% if v.final_url %}
-                                    <a href="{{ v.final_url }}" target="_blank"><img src="{{ v.thumbnail }}" alt="Garage"></a>
-                                {% elif v.imagen %}
-                                    <img src="{{ v.imagen }}" alt="Garage">
-                                {% else %}
-                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted opacity-25">
-                                        <i class="bi bi-shop display-4"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="p-3">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="fw-bold">{{ v.nombreproducto }}</h5>
-                                    <span class="text-success fw-bold">${{ v.precio }}</span>
-                                </div>
-                                <p class="small text-muted mb-3">{{ v.descripcion|default:"" }}</p>
-                                <div class="mt-auto">
-                                    {% if v.archivo_digital %}
-                                        <a href="{{ v.archivo_digital.url }}" target="_blank" class="btn btn-dark btn-sm w-100">Ver Detalles/Foto</a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+                        {% if v.final_url %}
+                          <div class="mt-3 p2-doc">
+                            <a href="{{ v.final_url }}" target="_blank">
+                              <img src="{{ v.thumbnail }}" alt="Garage">
+                              <div class="p2-doc-foot d-flex justify-content-between align-items-center">
+                                <small class="text-dark"><i class="bi bi-eye me-1"></i>Ver</small>
+                              </div>
+                            </a>
+                          </div>
+                        {% elif v.imagen %}
+                          <div class="mt-3 p2-doc">
+                            <img src="{{ v.imagen }}" alt="Garage">
+                            <div class="p2-doc-foot"><small class="text-dark">Imagen</small></div>
+                          </div>
+                        {% endif %}
+                      </div>
                     </div>
-                    {% endfor %}
+                  {% endfor %}
                 </div>
+              </div>
             </div>
+          </div>
+          {% endif %}
 
-        </div> 
-    </div>
-</div>
-
-<div class="modal fade" id="configPDFModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Personalizar PDF</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{% url 'cv_print' perfil.idperfil %}" method="GET" target="_blank">
-                <input type="hidden" name="from_modal" value="true">
-                <div class="modal-body">
-                    <p class="text-muted small mb-3">Selecciona las secciones para tu CV:</p>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="exp" id="c1" checked><label class="form-check-label fw-bold ms-2 w-100" for="c1">Experiencia</label></div>
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="edu" id="c2" checked><label class="form-check-label fw-bold ms-2 w-100" for="c2">Formación</label></div>
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="acad" id="c3" checked><label class="form-check-label fw-bold ms-2 w-100" for="c3">Productos Académicos</label></div>
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="lab" id="c4" checked><label class="form-check-label fw-bold ms-2 w-100" for="c4">Productos Laborales</label></div>
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="rec" id="c5" checked><label class="form-check-label fw-bold ms-2 w-100" for="c5">Logros</label></div>
-                        <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="garage" id="c6"><label class="form-check-label fw-bold ms-2 w-100" for="c6">Garage</label></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary w-100">Generar PDF</button>
-                </div>
-            </form>
         </div>
+      </section>
     </div>
+  </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        VanillaTilt.init(document.querySelectorAll(".hover-shadow"), { max: 3, speed: 400, glare: true, "max-glare": 0.05 });
-    });
-</script>
+<!-- ===== MODAL (se mantiene funcionalidad) ===== -->
+<div class="modal fade" id="configPDFModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Personalizar PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="{% url 'cv_print' perfil.idperfil %}" method="GET" target="_blank">
+        <input type="hidden" name="from_modal" value="true">
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Selecciona las secciones para tu CV:</p>
+          <div class="d-flex flex-column gap-2">
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="exp" id="c1" checked><label class="form-check-label fw-bold ms-2 w-100" for="c1">Experiencia</label></div>
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="edu" id="c2" checked><label class="form-check-label fw-bold ms-2 w-100" for="c2">Formación</label></div>
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="acad" id="c3" checked><label class="form-check-label fw-bold ms-2 w-100" for="c3">Productos Académicos</label></div>
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="lab" id="c4" checked><label class="form-check-label fw-bold ms-2 w-100" for="c4">Productos Laborales</label></div>
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="rec" id="c5" checked><label class="form-check-label fw-bold ms-2 w-100" for="c5">Logros</label></div>
+            <div class="form-check p-2 border rounded bg-light"><input class="form-check-input ms-1" type="checkbox" name="garage" id="c6"><label class="form-check-label fw-bold ms-2 w-100" for="c6">Garage</label></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">Generar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
