@@ -89,7 +89,7 @@ def cv_print(request, idperfil):
     show_acad = check("acad") # ✅ Nuevo filtro
     show_lab = check("lab")   # ✅ Nuevo filtro
     show_rec = check("rec")
-    show_garage = check("garage") if from_modal else False 
+    show_garage = check("garage")
 
     # 2. Consultas Filtradas
     experiencias = Experiencialaboral.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True).order_by("-fechainiciogestion") if show_exp else []
@@ -105,7 +105,7 @@ def cv_print(request, idperfil):
     _enrich_objects(experiencias)
     _enrich_objects(cursos)
     _enrich_objects(reconocimientos)
-
+    _enrich_objects(garage)
     # 3. Generar PDF Principal
     context = {
         "perfil": perfil, "experiencias": experiencias, "cursos": cursos,

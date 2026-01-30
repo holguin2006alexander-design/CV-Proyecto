@@ -436,6 +436,47 @@
         </section>
         {% endif %}
 
+        {% if ventas_garage and request.GET.garage != "off" %}
+        <section class="sec">
+          <h2 class="sec-title">Catálogo / Garage</h2>
+
+          {% for v in ventas_garage %}
+          <div class="item">
+
+            <div class="item-top">
+              <div>
+                <div class="item-title">{{ v.nombreproducto }}</div>
+
+                <div class="item-subtitle">
+                  Estado:
+                  <b
+                    style="
+                      color:
+                      {% if v.estado == 'Bueno' %}#16a34a
+                      {% elif v.estado == 'Regular' %}#ca8a04
+                      {% else %}#334155{% endif %}
+                    "
+                  >
+                    {{ v.estado }}
+                  </b>
+                </div>
+              </div>
+
+              <div class="item-date">
+                ${{ v.precio }}
+              </div>
+            </div>
+
+            {% if v.descripcion %}
+              <div class="item-body">{{ v.descripcion }}</div>
+            {% endif %}
+
+          </div>
+          {% endfor %}
+        </section>
+        {% endif %}
+
+
       </main>
     </div>
   </div>
